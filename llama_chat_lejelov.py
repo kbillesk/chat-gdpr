@@ -5,17 +5,13 @@ Created on Thu Aug 17 13:55:25 2023
 
 @author: kbillesk
 """
-import nltk
-from langchain.embeddings import HuggingFaceEmbeddings
-from llama_index import ServiceContext, SimpleDirectoryReader, VectorStoreIndex, Prompt, PromptHelper, StorageContext, load_index_from_storage
-from llama_index.node_parser import SimpleNodeParser, SentenceWindowNodeParser
+from llama_index import ServiceContext, SimpleDirectoryReader, VectorStoreIndex, Prompt, StorageContext, load_index_from_storage
+from llama_index.node_parser import SentenceWindowNodeParser
 from llama_index.llms import OpenAI
-from llama_index.llms import openai_utils
 from llama_index.indices.postprocessor import MetadataReplacementPostProcessor
 print("pet")
 node_parser = SentenceWindowNodeParser.from_defaults(window_size=3)
 llm = OpenAI(model="gpt-3.5-turbo", temperature=0)
-#service_context = ServiceContext.from_defaults(llm=llm, embed_model=HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2"), node_parser=node_parser)
 service_context = ServiceContext.from_defaults(llm=llm, node_parser=node_parser)
 print(service_context)
 template = (
@@ -27,8 +23,8 @@ template = (
 )
 qa_template = Prompt(template)
 documents = SimpleDirectoryReader('legaldata/').load_data()
-#index = VectorStoreIndex.from_documents(documents,service_context=service_context)
-#index.storage_context.persist(persist_dir="legalstorage")
+index = VectorStoreIndex.from_documents(documents,service_context=service_context)
+index.storage_context.persist(persist_dir="legalstorage")
 storage_context = StorageContext.from_defaults(persist_dir="legalstorage")
 index = load_index_from_storage(storage_context)
 query_engine = index.as_query_engine(similarity_top_k=5, node_postprocessors=[MetadataReplacementPostProcessor(target_metadata_key="window")],text_qa_template=qa_template)
