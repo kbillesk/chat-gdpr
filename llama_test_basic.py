@@ -19,7 +19,6 @@ index.storage_context.persist(persist_dir="examples/gdpr_expert/storage")
 #storage_context = StorageContext.from_defaults(persist_dir="example/gdpr_expert/storage")
 #index = load_index_from_storage(storage_context)
 query_engine = index.as_query_engine(service_context=service_context)
-#openai_api_key="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"
 question = "ww"
 while question != "quit":
     question = input("Stil dit GDPR spørgsmål?\n")
